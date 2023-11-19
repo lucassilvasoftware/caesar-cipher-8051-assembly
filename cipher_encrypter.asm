@@ -1,5 +1,5 @@
-    RS      equ     P1.3    ;Reg Select ligado em P1.3
-    EN      equ     P1.2    ;Enable ligado em P1.2
+RS      equ     P1.3    ;Reg Select ligado em P1.3
+EN      equ     P1.2    ;Enable ligado em P1.2
 
 ORG 000H
 LJMP MAIN
@@ -52,12 +52,15 @@ MAIN:
 	MOV 4AH, #02h
 	MOV 4BH, #01h
 
-LEITURA_PRIMEIRO_NUMERO:
+ESCRITA_LCD:
 	ACALL lcd_init
 	MOV A, #00h
 	ACALL posicionaCursor
 	MOV DPTR,#INPUT_SHIFT_LCD
 	ACALL escreveStringROM
+	JMP LEITURA_PRIMEIRO_NUMERO
+
+LEITURA_PRIMEIRO_NUMERO:
 
 	ACALL LEITURA_TECLADO ; CHAMA A FUNCAO QUE ARMAZENA EM R0 A LETRA
 	JNB F0, LEITURA_PRIMEIRO_NUMERO
@@ -93,6 +96,7 @@ LEITURA_SEGUNDO_NUMERO:
 	ACALL posicionaCursor
 	MOV DPTR,#INPUT_STRING_LCD
 	ACALL escreveStringROM
+	JMP SETUP_TRANSMISSORS
 
 SETUP_TRANSMISSORS:
     MOV SCON, #50H
@@ -158,7 +162,7 @@ escreveStringROM:
 	; Inicia a escrita da String no Display LCD
 loop:
   MOV A, R1
-	MOVC A,@A+DPTR 	 ;l� da mem�ria de programa
+	MOVC A,@A+DPTR 	 ;l  da mem ria de programa
 	JZ finish		; if A is 0, then end of data has been reached - jump out of loop
 	ACALL sendCharacter	; send data in A to LCD module
 	INC R1			; point to next piece of data
@@ -265,7 +269,7 @@ sendCharacter:
 	RET
 
 ;Posiciona o cursor na linha e coluna desejada.
-;Escreva no Acumulador o valor de endere�o da linha e coluna.
+;Escreva no Acumulador o valor de endere o da linha e coluna.
 ;|--------------------------------------------------------------------------------------|
 ;|linha 1 | 00 | 01 | 02 | 03 | 04 |05 | 06 | 07 | 08 | 09 |0A | 0B | 0C | 0D | 0E | 0F |
 ;|linha 2 | 40 | 41 | 42 | 43 | 44 |45 | 46 | 47 | 48 | 49 |4A | 4B | 4C | 4D | 4E | 4F |
@@ -300,7 +304,7 @@ posicionaCursor:
 	RET
 
 
-;Retorna o cursor para primeira posi��o sem limpar o display
+;Retorna o cursor para primeira posi  o sem limpar o display
 retornaCursor:
 	CLR RS	
 	CLR P1.7		; |
@@ -353,4 +357,3 @@ DELAY2:
 	MOV R0, #50
 	DJNZ R0, $
 	RET
-
